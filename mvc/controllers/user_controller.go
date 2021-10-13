@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 
@@ -9,28 +9,23 @@ import (
 	"github.com/maurobastasini/go-microservices/mvc/utils"
 )
 
-func GetUser(writer http.ResponseWriter, request *http.Request) {
-	userIdParam, err := strconv.ParseUint(request.URL.Query().Get("user_id"), 10, 64)
+func GetUser(c *gin.Context) {
+	userIdParam, err := strconv.ParseUint(c.Param("user_id"), 10, 64)
 	if err != nil {
 		apiError := &utils.ApplicationError{
 			Message:    "user_id param must be a positive number",
 			StatusCode: http.StatusBadRequest,
 			Code:       "bad_request",
 		}
-		invalidUserError, _ := json.Marshal(apiError)
-		writer.WriteHeader(apiError.StatusCode)
-		writer.Write(invalidUserError)
+		utils.RespondError(c, apiError)
 		return
 	}
 
 	user, apiErr := services.GetUser(userIdParam)
 	if apiErr != nil {
-		errJson, _ := json.Marshal(apiErr)
-		writer.WriteHeader(apiErr.StatusCode)
-		writer.Write(errJson)
+		utils.RespondError(c, apiErr)
 		return
 	}
 
-	userJson, _ := json.Marshal(user)
-	writer.Write(userJson)
+	utils.Respond(c, http.StatusOK, user)
 }
