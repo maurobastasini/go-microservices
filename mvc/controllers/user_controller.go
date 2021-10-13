@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/maurobastasini/go-microservices/mvc/app/services"
+	"github.com/maurobastasini/go-microservices/mvc/services"
 	"github.com/maurobastasini/go-microservices/mvc/utils"
 )
 
